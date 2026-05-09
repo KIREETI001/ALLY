@@ -1,65 +1,143 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+// Slim dispatcher. Picks the right view based on auth + onboarding state.
+//
+// Pre-app: pre-auth users see the marketing/landing redirect to /login.
+// Once authed: if no patient yet → onboarding flow (language → onboarding → discharge).
+// Once patient + plan exist → main app (5-tab bottom nav).
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useApp } from '@/context/AppContext';
+import { useTasks } from '@/lib/hooks/useTasks';
+import PhoneFrame from '@/components/PhoneFrame';
+import BottomNav, { type TabId } from '@/components/BottomNav';
+import TaskDetailModal from '@/components/TaskDetailModal';
+import LanguageScreen from '@/components/screens/LanguageScreen';
+import OnboardingScreen from '@/components/screens/OnboardingScreen';
+import DischargeFlow from '@/components/screens/DischargeFlow';
+import HomeTab from '@/components/tabs/HomeTab';
+import TasksTab from '@/components/tabs/TasksTab';
+import AllyChatTab from '@/components/tabs/AllyChatTab';
+import ResourcesTab from '@/components/tabs/ResourcesTab';
+import ProfileTab from '@/components/tabs/ProfileTab';
+import { C } from '@/lib/theme';
+import type { Task, Patient, CarePlan } from '@/lib/types';
+
+type PreAppStep = 'language' | 'onboarding' | 'discharge';
+
+export default function ALLY() {
+  const router = useRouter();
+  const { loading, user, currentPatient, currentCarePlan, fdwMode, setCurrentPatient, setCurrentCarePlan } = useApp();
+
+  // Redirect unauthenticated users to /login (middleware also enforces this server-side).
+  useEffect(() => {
+    if (!loading && !user) router.replace('/login');
+  }, [loading, user, router]);
+
+  // Pre-app step state when onboarding
+  const [preStep, setPreStep] = useState<PreAppStep>('language');
+  const [activePatient, setActivePatient] = useState<Patient | null>(null);
+
+  // Main app state
+  const [activeTab, setActiveTab] = useState<TabId>('home');
+  const [openTask, setOpenTask] = useState<Task | null>(null);
+
+  const { toggleDone } = useTasks(currentCarePlan?.id || null);
+
+  if (loading || !user) {
+    return (
+      <PhoneFrame>
+        <LoadingState />
+      </PhoneFrame>
+    );
+  }
+
+  // First-time onboarding flow: no patient yet
+  const needsOnboarding = !currentPatient;
+  const needsCarePlan = currentPatient && !currentCarePlan;
+
+  if (needsOnboarding) {
+    return (
+      <PhoneFrame>
+        {preStep === 'language' && <LanguageScreen onContinue={() => setPreStep('onboarding')} />}
+        {preStep === 'onboarding' && (
+          <OnboardingScreen
+            onComplete={(patient) => {
+              setActivePatient(patient);
+              setCurrentPatient(patient);
+              setPreStep('discharge');
+            }}
+          />
+        )}
+        {preStep === 'discharge' && (activePatient || currentPatient) && (
+          <DischargeFlow
+            patient={(activePatient || currentPatient) as Patient}
+            onComplete={(plan: CarePlan) => {
+              setCurrentCarePlan(plan);
+              setActiveTab('home');
+            }}
+            onBack={() => setPreStep('onboarding')}
+            onSkip={() => setActiveTab('home')}
+          />
+        )}
+      </PhoneFrame>
+    );
+  }
+
+  // Patient exists but no care plan yet (user skipped discharge upload during onboarding).
+  // Let them complete it from the discharge flow on demand by going to Tasks tab; for now we just go to main app.
+  if (needsCarePlan) {
+    return (
+      <PhoneFrame>
+        <DischargeFlow
+          patient={currentPatient as Patient}
+          onComplete={(plan: CarePlan) => {
+            setCurrentCarePlan(plan);
+            setActiveTab('home');
+          }}
+          onBack={() => setActiveTab('home')}
+          onSkip={() => setActiveTab('home')}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </PhoneFrame>
+    );
+  }
+
+  // Main app
+  return (
+    <PhoneFrame>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {activeTab === 'home' && (
+            <HomeTab
+              onTaskTap={setOpenTask}
+              onSubsidyTap={() => router.push('/subsidies')}
+              onTasksTap={() => setActiveTab('tasks')}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          )}
+          {activeTab === 'tasks' && <TasksTab onTaskTap={setOpenTask} />}
+          {activeTab === 'chat' && <AllyChatTab />}
+          {activeTab === 'resources' && <ResourcesTab />}
+          {activeTab === 'profile' && <ProfileTab />}
         </div>
-      </main>
+
+        <BottomNav active={activeTab} onChange={setActiveTab} />
+
+        <TaskDetailModal
+          task={openTask}
+          fdwMode={fdwMode}
+          onClose={() => setOpenTask(null)}
+          onToggle={toggleDone}
+        />
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: C.bg, color: C.sub, fontSize: 14 }}>
+      Loading…
     </div>
   );
 }

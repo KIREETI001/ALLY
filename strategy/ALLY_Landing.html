@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ALLY — Support the ones who support everyone else</title>
+  <meta name="description" content="ALLY is the caregiver co-pilot for Singapore — turning discharge documents into care plans, family WhatsApp into coordinated teams, and the subsidy maze into a five-question wizard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pri: #1B6B7B;
+      --dark: #0D3D47;
+      --light: #2E8FA3;
+      --pale: #E0F2F6;
+      --paler: #F0F6F8;
+      --card: #FFFFFF;
+      --text: #1A2B35;
+      --sub: #5A7A8A;
+      --border: #DDE8EC;
+      --warn: #D97706;
+      --warnBg: #FEF3C7;
+      --ok: #047857;
+      --okBg: #D1FAE5;
+      --pur: #7C3AED;
+      --purBg: #EDE9FE;
+      --shadow: 0 1px 3px rgba(13,61,71,.08), 0 4px 24px rgba(13,61,71,.06);
+      --shadow-lg: 0 4px 12px rgba(13,61,71,.10), 0 12px 48px rgba(13,61,71,.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      background: var(--paler);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--pri); text-decoration: none; }
+    a:hover { color: var(--dark); }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- Navigation ---------- */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0;
+    }
+    .logo {
+      font-weight: 800; font-size: 22px;
+      color: var(--pri); letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo .moon {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--pri), var(--dark));
+      position: relative;
+    }
+    .logo .moon::after {
+      content: ''; position: absolute; top: 4px; right: 4px;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--paler);
+    }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      color: var(--text); font-weight: 500; font-size: 14px;
+    }
+    .nav-cta {
+      background: var(--pri); color: white !important;
+      padding: 9px 18px; border-radius: 10px;
+      font-weight: 600; font-size: 14px;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: var(--dark); color: white !important; }
+
+    @media (max-width: 720px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      padding: 100px 0 80px;
+      background:
+        radial-gradient(ellipse at 20% -10%, var(--pale) 0%, transparent 55%),
+        radial-gradient(ellipse at 110% 20%, #DCEEF2 0%, transparent 50%),
+        var(--paler);
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: center;
+    }
+    .eyebrow {
+      display: inline-block;
+      background: var(--pale); color: var(--dark);
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 56px; line-height: 1.05; letter-spacing: -1.2px;
+      font-weight: 800; color: var(--dark);
+      margin-bottom: 22px;
+    }
+    .hero h1 .accent { color: var(--pri); }
+    .hero-lead {
+      font-size: 19px; color: var(--sub); max-width: 540px;
+      margin-bottom: 32px;
+    }
+    .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block; padding: 14px 24px; border-radius: 12px;
+      font-weight: 600; font-size: 15px; cursor: pointer;
+      border: none; transition: all 0.15s ease;
+      text-align: center;
+    }
+    .btn-primary {
+      background: var(--pri); color: white;
+      box-shadow: 0 4px 14px rgba(27,107,123,0.35);
+    }
+    .btn-primary:hover { background: var(--dark); transform: translateY(-1px); color: white; }
+    .btn-secondary {
+      background: white; color: var(--pri);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--pri); color: var(--pri); }
+
+    .hero-visual {
+      position: relative;
+    }
+    .phone-frame {
+      background: #0D3D47; border-radius: 36px; padding: 12px;
+      box-shadow: var(--shadow-lg);
+      width: 320px; margin: 0 auto;
+    }
+    .phone-screen {
+      background: var(--paler); border-radius: 26px; overflow: hidden;
+      height: 580px;
+      display: flex; flex-direction: column;
+    }
+    .phone-header {
+      background: linear-gradient(135deg, var(--pri), var(--dark));
+      padding: 20px 18px 22px; color: white;
+    }
+    .phone-greet { font-size: 13px; opacity: 0.85; }
+    .phone-name { font-size: 19px; font-weight: 700; margin-top: 2px; }
+    .burnout-card {
+      margin: -14px 14px 12px;
+      background: white; border-radius: 14px; padding: 14px;
+      box-shadow: 0 2px 12px rgba(13,61,71,0.08);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .burnout-dot {
+      width: 12px; height: 12px; border-radius: 50%; background: var(--ok);
+      flex-shrink: 0;
+    }
+    .burnout-text { font-size: 13px; color: var(--text); }
+    .burnout-text strong { display: block; font-size: 14px; }
+    .phone-section {
+      padding: 8px 14px;
+    }
+    .phone-section h4 {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--sub); margin: 8px 0;
+    }
+    .task-row {
+      background: white; border-radius: 12px; padding: 12px 14px;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 1px 3px rgba(13,61,71,0.05);
+    }
+    .task-check {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .task-check.done { background: var(--ok); border-color: var(--ok); position: relative; }
+    .task-check.done::after {
+      content: ''; position: absolute; left: 6px; top: 3px;
+      width: 5px; height: 9px; border-right: 2px solid white; border-bottom: 2px solid white;
+      transform: rotate(45deg);
+    }
+    .task-meta { flex: 1; }
+    .task-title { font-size: 14px; font-weight: 600; }
+    .task-time { font-size: 12px; color: var(--sub); }
+    .task-tag {
+      font-size: 10px; padding: 3px 8px; border-radius: 999px;
+      background: var(--purBg); color: var(--pur); font-weight: 600;
+    }
+    .task-tag.med { background: #DBEAFE; color: #1D4ED8; }
+    .task-tag.wound { background: var(--warnBg); color: var(--warn); }
+
+    @media (max-width: 920px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .hero h1 { font-size: 40px; }
+      .hero { padding: 60px 0; }
+    }
+
+    /* ---------- Stats strip ---------- */
+    .stats {
+      background: var(--dark); color: white;
+      padding: 50px 0;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 36px; font-weight: 800; color: var(--pale);
+      line-height: 1; margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 13px; opacity: 0.85; line-height: 1.4;
+    }
+    @media (max-width: 720px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .stat-num { font-size: 28px; }
+    }
+
+    /* ---------- Sections ---------- */
+    .section { padding: 90px 0; }
+    .section-eyebrow {
+      color: var(--pri); font-size: 13px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 38px; font-weight: 800; color: var(--dark);
+      letter-spacing: -0.8px; line-height: 1.15;
+      max-width: 700px; margin-bottom: 16px;
+    }
+    .section-lead {
+      font-size: 17px; color: var(--sub); max-width: 700px;
+      margin-bottom: 48px;
+    }
+
+    /* ---------- Cards grid ---------- */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    @media (max-width: 920px) {
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: white; border-radius: 18px; padding: 28px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--pale); color: var(--pri);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 18px;
+    }
+    .card h3 {
+      font-size: 19px; font-weight: 700; color: var(--dark);
+      margin-bottom: 10px;
+    }
+    .card p { color: var(--sub); font-size: 15px; }
+
+    /* ---------- Segments table ---------- */
+    .seg-card {
+      background: white; padding: 26px; border-radius: 16px;
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .seg-name {
+      font-size: 17px; font-weight: 700; color: var(--dark);
+    }
+    .seg-pain {
+      font-size: 14px; color: var(--text); font-style: italic;
+      padding: 10px 12px; background: var(--paler); border-left: 3px solid var(--pri);
+      border-radius: 6px; margin: 4px 0;
+    }
+    .seg-meta {
+      display: flex; gap: 14px; font-size: 13px; color: var(--sub);
+      flex-wrap: wrap;
+    }
+    .seg-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* ---------- Pain point ---------- */
+    .pain-block {
+      background: white; border-radius: 18px; padding: 32px;
+      border: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .pain-block.flip { direction: rtl; }
+    .pain-block.flip > * { direction: ltr; }
+    .pain-text h4 {
+      font-size: 14px; color: var(--pri); font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .pain-text h3 {
+      font-size: 24px; color: var(--dark); font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .pain-text p { color: var(--sub); margin-bottom: 14px; font-size: 15px; }
+    .pain-feature {
+      background: var(--okBg); color: var(--ok); padding: 10px 14px;
+      border-radius: 10px; font-size: 14px; font-weight: 500;
+    }
+    .pain-illustration {
+      background: linear-gradient(135deg, var(--pale), #F4F8FA);
+      border-radius: 14px; padding: 28px; min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--pri); font-size: 14px; font-weight: 600; text-align: center;
+    }
+    @media (max-width: 920px) {
+      .pain-block, .pain-block.flip { grid-template-columns: 1fr; direction: ltr; }
+    }
+
+    /* ---------- Pricing ---------- */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    @media (max-width: 1100px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+
+    .price {
+      background: white; border-radius: 16px; padding: 24px;
+      border: 1.5px solid var(--border);
+      display: flex; flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .price:hover { transform: translateY(-2px); }
+    .price.featured {
+      border-color: var(--pri); border-width: 2px;
+      box-shadow: 0 4px 24px rgba(27,107,123,0.15);
+      position: relative;
+    }
+    .price.featured::before {
+      content: 'Most popular';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--pri); color: white;
+      padding: 4px 14px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+    }
+    .price-tier {
+      font-size: 13px; font-weight: 700; color: var(--pri);
+      letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .price-name {
+      font-size: 22px; font-weight: 700; color: var(--dark);
+      margin-bottom: 14px;
+    }
+    .price-amount {
+      display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px;
+    }
+    .price-num {
+      font-size: 32px; font-weight: 800; color: var(--dark);
+    }
+    .price-unit { color: var(--sub); font-size: 14px; }
+    .price-desc {
+      font-size: 13px; color: var(--sub);
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .price-features {
+      list-style: none; flex: 1; margin-bottom: 18px;
+    }
+    .price-features li {
+      font-size: 13px; color: var(--text);
+      padding: 5px 0 5px 22px; position: relative;
+    }
+    .price-features li::before {
+      content: ''; position: absolute; left: 0; top: 9px;
+      width: 14px; height: 8px; border-left: 2px solid var(--ok);
+      border-bottom: 2px solid var(--ok); transform: rotate(-45deg);
+    }
+    .price-cta {
+      display: block; text-align: center; padding: 11px;
+      border-radius: 10px; font-weight: 600; font-size: 14px;
+      background: var(--paler); color: var(--pri);
+      border: 1px solid var(--border);
+    }
+    .price.featured .price-cta {
+      background: var(--pri); color: white; border-color: var(--pri);
+    }
+    .price-cta:hover { background: var(--dark); color: white; border-color: var(--dark); }
+    .price.featured .price-cta:hover { background: var(--dark); color: white; }
+
+    /* B2B tiers split */
+    .b2b-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px;
+    }
+    @media (max-width: 920px) { .b2b-grid { grid-template-columns: 1fr; } }
+    .b2b {
+      background: linear-gradient(135deg, var(--dark), var(--pri));
+      color: white; border-radius: 16px; padding: 24px;
+    }
+    .b2b .price-tier { color: var(--pale); }
+    .b2b .price-name { color: white; }
+    .b2b .price-num { color: white; }
+    .b2b .price-unit { color: var(--pale); }
+    .b2b .price-desc { color: var(--pale); border-bottom-color: rgba(255,255,255,0.2); }
+    .b2b .price-features li { color: white; }
+    .b2b .price-features li::before { border-color: var(--pale); }
+    .b2b .price-cta {
+      background: white; color: var(--dark); border-color: white;
+    }
+    .b2b .price-cta:hover { background: var(--pale); color: var(--dark); }
+
+    /* ---------- Compliance / trust ---------- */
+    .trust-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+    }
+    @media (max-width: 720px) { .trust-grid { grid-template-columns: 1fr; } }
+    .trust-item {
+      background: white; border-radius: 14px; padding: 22px;
+      border: 1px solid var(--border);
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .trust-icon {
+      flex-shrink: 0; width: 36px; height: 36px;
+      border-radius: 8px; background: var(--okBg);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ok); font-size: 18px; font-weight: 700;
+    }
+    .trust-item h4 { color: var(--dark); font-size: 15px; margin-bottom: 4px; }
+    .trust-item p { color: var(--sub); font-size: 14px; }
+
+    /* ---------- Partners ---------- */
+    .partner-bg {
+      background: var(--dark); color: white;
+      border-radius: 24px; padding: 56px 48px;
+      margin: 0 24px;
+    }
+    .partner-bg .section-title { color: white; max-width: 700px; }
+    .partner-bg .section-lead { color: var(--pale); }
+    .partner-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 32px;
+    }
+    @media (max-width: 920px) { .partner-grid { grid-template-columns: 1fr; } }
+    .partner-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 22px;
+    }
+    .partner-card h4 { font-size: 17px; color: white; margin-bottom: 8px; }
+    .partner-card p { color: var(--pale); font-size: 14px; margin-bottom: 14px; }
+    .partner-card .pill {
+      display: inline-block; background: var(--pri); color: white;
+      padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    }
+
+    /* ---------- FAQ ---------- */
+    .faq { display: flex; flex-direction: column; gap: 10px; }
+    .faq details {
+      background: white; border-radius: 12px; padding: 18px 22px;
+      border: 1px solid var(--border);
+    }
+    .faq summary {
+      font-weight: 600; color: var(--dark); cursor: pointer;
+      font-size: 16px; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: '+'; font-size: 22px; color: var(--pri); font-weight: 400;
+    }
+    .faq details[open] summary::after { content: '−'; }
+    .faq details p {
+      margin-top: 12px; color: var(--sub); font-size: 15px; line-height: 1.6;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: var(--dark); color: white; padding: 60px 0 28px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    footer h5 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--pale); margin-bottom: 16px;
+    }
+    footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    footer ul a { color: white; opacity: 0.8; font-size: 14px; }
+    footer ul a:hover { opacity: 1; }
+    .footer-mission {
+      max-width: 360px;
+    }
+    .footer-mission .logo { color: white; font-size: 24px; margin-bottom: 14px; }
+    .footer-mission p { color: var(--pale); font-size: 14px; line-height: 1.6; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 22px;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      font-size: 13px; color: var(--pale);
+    }
+    .disclaimer {
+      max-width: 640px; margin-top: 18px;
+      font-size: 12px; color: var(--pale); opacity: 0.85;
+      padding: 14px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border-left: 3px solid var(--pri);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo"><div class="moon"></div>ALLY</div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#segments">Who it's for</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#partners">Partners</a>
+      <a href="#faq">FAQ</a>
+      <a class="nav-cta" href="#try">Try ALLY free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Built for Singapore caregivers</span>
+      <h1>Support the ones who <span class="accent">support everyone else.</span></h1>
+      <p class="hero-lead">ALLY turns the discharge document into a care plan, the family WhatsApp into a coordinated team, and the subsidy maze into a five-question wizard. Built for the 210,000+ Singaporeans who hold their families together — quietly, daily, mostly alone.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#try">Try ALLY free</a>
+        <a class="btn btn-secondary" href="#partners">For hospitals & employers</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="phone-greet">Wednesday morning</div>
+            <div class="phone-name">Hi Sarah 🌙</div>
+          </div>
+          <div class="burnout-card">
+            <div class="burnout-dot"></div>
+            <div class="burnout-text">
+              <strong>You're holding up.</strong>
+              4/5 tasks on track today. Take 10 min for yourself.
+            </div>
+          </div>
+          <div class="phone-section">
+            <h4>Today · 5 tasks</h4>
+            <div class="task-row">
+              <div class="task-check done"></div>
+              <div class="task-meta">
+                <div class="task-title">Metformin 500mg</div>
+                <div class="task-time">8:00 AM · Sarah</div>
+              </div>
+              <div class="task-tag med">Med</div>
+            </div>
+            <div class="task-row">
+              <div class="task-check done"></div>
+              <div class="task-meta">
+                <div class="task-title">Physiotherapy</div>
+                <div class="task-time">10:00 AM · Sarah</div>
+              </div>
+              <div class="task-tag">Physio</div>
+            </div>
+            <div class="task-row">
+              <div class="task-check"></div>
+              <div class="task-meta">
+                <div class="task-title">Wound dressing</div>
+                <div class="task-time">3:30 PM · David</div>
+              </div>
+              <div class="task-tag wound">Wound</div>
+            </div>
+            <div class="task-row">
+              <div class="task-check"></div>
+              <div class="task-meta">
+                <div class="task-title">Low-sodium dinner</div>
+                <div class="task-time">6:30 PM · Auntie M.</div>
+              </div>
+              <div class="task-tag">Meal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat"><div class="stat-num">210,000+</div><div class="stat-label">Informal family caregivers in Singapore</div></div>
+    <div class="stat"><div class="stat-num">33 hrs</div><div class="stat-label">Avg primary caregiver workload per week</div></div>
+    <div class="stat"><div class="stat-num">40%+</div><div class="stat-label">At risk of clinical depression</div></div>
+    <div class="stat"><div class="stat-num">5%</div><div class="stat-label">Have ever attended caregiver training</div></div>
+  </div>
+</section>
+
+<!-- How it works / features -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-eyebrow">What ALLY does</div>
+    <h2 class="section-title">Six features that turn caregiving from a panic moment into a plan.</h2>
+    <p class="section-lead">Each feature exists because a caregiver told us they couldn't handle the moment without it. Each one is calibrated for Singapore — its hospitals, its schemes, its languages, its households.</p>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>Discharge summary parser</h3>
+        <p>Drop in your hospital discharge document. ALLY extracts medications, wound care, warning signs, follow-ups, and turns them into a structured care plan in under 30 seconds — with a confirmation step so you stay in control.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>Subsidy navigator</h3>
+        <p>Five questions. ALLY tells you which government schemes you qualify for, with current 2026 amounts — including the new S$600/mo Home Caregiving Grant. Most users find S$2,000–8,000/year they didn't know existed.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👥</div>
+        <h3>Care team coordination</h3>
+        <p>Invite your spouse, siblings, and helper. Everyone sees the same task list. Ownership is explicit. The auditable log ends weekly arguments at the family WhatsApp meeting.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌏</div>
+        <h3>Five languages, fully</h3>
+        <p>English, Mandarin, Malay, Tamil, and Filipino — not just translated buttons but translated medication explanations, JIT videos, and subsidy guides. The helper, the auntie, the parent: included.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌙</div>
+        <h3>Burnout monitoring</h3>
+        <p>ALLY watches the signs you don't notice yourself — completion times slipping, mood logs trending down, chat sentiment shifting. Gentle nudges, never alarms. Respite care surfaced when you need it.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3>AI co-pilot</h3>
+        <p>A chat companion grounded in Singapore healthcare, schemes, and clinical guidelines. Not a doctor, not a diagnoser — a knowledgeable friend who remembers everything you told it about your loved one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Segments -->
+<section class="section" id="segments" style="background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap">
+    <div class="section-eyebrow">Who ALLY is for</div>
+    <h2 class="section-title">Caregiving in Singapore isn't one experience. It's nine.</h2>
+    <p class="section-lead">From the sandwich-generation professional to the elderly spouse, the distributed-family coordinator to the foreign domestic worker. ALLY routes each caregiver into an experience designed for their reality.</p>
+    <div class="grid-3">
+      <div class="seg-card">
+        <div class="seg-name">The Sandwich Generation Anchor</div>
+        <div class="seg-pain">"I'm raising kids and managing my parent's health — I'm the only one who knows everything."</div>
+        <div class="seg-meta"><span>30s–50s</span><span>·</span><span>Mental load</span><span>·</span><span>Anchor segment</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Spouse Caregiver</div>
+        <div class="seg-pain">"I'm 72 and caring for my husband with dementia. The app is intimidating, but I have no choice."</div>
+        <div class="seg-meta"><span>60s+</span><span>·</span><span>Loneliness</span><span>·</span><span>Audio support</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Distributed Family</div>
+        <div class="seg-pain">"My siblings are in Sydney and London. We argue every Sunday because nobody knows what got done."</div>
+        <div class="seg-meta"><span>Cross-border</span><span>·</span><span>Coordination</span><span>·</span><span>Viral loop</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The FDW-Reliant Household</div>
+        <div class="seg-pain">"My helper does the daily care. I have no clue if it's being done right. She has no one to ask."</div>
+        <div class="seg-meta"><span>FDW-first mode</span><span>·</span><span>Bilingual</span><span>·</span><span>Photo logs</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Young Caregiver</div>
+        <div class="seg-pain">"I'm 22. My dad had a stroke. I'm reading discharge summaries when my friends are reading study notes."</div>
+        <div class="seg-meta"><span>Under 35</span><span>·</span><span>Information shock</span><span>·</span><span>Free tier</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Dual-Care Caregiver</div>
+        <div class="seg-pain">"My son has special needs and my mother has dementia. There aren't enough hours in the day."</div>
+        <div class="seg-meta"><span>Multi-recipient</span><span>·</span><span>Highest burden</span><span>·</span><span>Family tier</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Temporary Caregiver</div>
+        <div class="seg-pain">"My partner had hip surgery. I need to nail the next 90 days. I won't be a caregiver after that."</div>
+        <div class="seg-meta"><span>Episodic</span><span>·</span><span>One-time pricing</span><span>·</span><span>Hospital QR</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Long-Term Chronic Caregiver</div>
+        <div class="seg-pain">"It's been seven years. I don't remember who I was before this. I don't know how to ask for help."</div>
+        <div class="seg-meta"><span>Multi-year</span><span>·</span><span>Burnout watch</span><span>·</span><span>Highest stickiness</span></div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">The Recipient-Caregiver</div>
+        <div class="seg-pain">"My wife has diabetes and I have heart failure. We care for each other. Nobody is checking on us."</div>
+        <div class="seg-meta"><span>Dual care</span><span>·</span><span>Subsidised tier</span><span>·</span><span>Equity</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pain points & solutions -->
+<section class="section" id="pain">
+  <div class="wrap">
+    <div class="section-eyebrow">Walking in their shoes</div>
+    <h2 class="section-title">The moments that matter most — and how ALLY shows up.</h2>
+    <p class="section-lead">These aren't features looking for a problem. They're problems we lived, looking for a solution.</p>
+
+    <div class="pain-block">
+      <div class="pain-text">
+        <h4>The first 72 hours</h4>
+        <h3>You leave the hospital with a six-page summary you can't process.</h3>
+        <p>Mum is drowsy in the wheelchair. The nurse went through medications quickly. You're nodding because everyone is nodding. You will not remember any of this in three hours.</p>
+        <div class="pain-feature">→ Discharge parser turns the document into a care plan in 30 seconds</div>
+      </div>
+      <div class="pain-illustration">📄 → ✓ ✓ ✓</div>
+    </div>
+
+    <div class="pain-block flip">
+      <div class="pain-text">
+        <h4>Subsidy navigation hell</h4>
+        <h3>Six schemes, fifty pages, one weekend you don't have.</h3>
+        <p>HCG. CHAS. Pioneer. SMF. MediFund. CTG. Different criteria. Different applications. You'll never get to it. You'll leave thousands on the table.</p>
+        <div class="pain-feature">→ Subsidy navigator surfaces what you qualify for in five questions</div>
+      </div>
+      <div class="pain-illustration">5 questions → S$X,XXX/year</div>
+    </div>
+
+    <div class="pain-block">
+      <div class="pain-text">
+        <h4>Family conflict on Sunday</h4>
+        <h3>Three siblings, four different versions of what got done this week.</h3>
+        <p>Your brother thinks you're doing too much. Your sister thinks you're not doing enough. The helper thinks no-one is in charge. Every video call dissolves into the same five arguments.</p>
+        <div class="pain-feature">→ Shared task log ends arguments before they start</div>
+      </div>
+      <div class="pain-illustration">👥 transparent · auditable · shared</div>
+    </div>
+
+    <div class="pain-block flip">
+      <div class="pain-text">
+        <h4>The mental load</h4>
+        <h3>You haven't slept properly in three weeks. Nobody is asking how you are.</h3>
+        <p>You're the appointment-scheduler, the medication-checker, the symptom-watcher, the helper-trainer, the sibling-updater. Nobody notices you've stopped sleeping.</p>
+        <div class="pain-feature">→ Burnout monitor catches the signs you can't see yourself</div>
+      </div>
+      <div class="pain-illustration">🌙 gentle · proactive · respite-routed</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section" id="pricing" style="background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 class="section-title">Pricing that respects how different caregivers actually live.</h2>
+    <p class="section-lead">A free tier for the student, a flagship for the family, an episodic plan for the temporary caregiver, and a sponsored tier for those who need it most. Plus B2B2C tiers for hospitals and employers.</p>
+
+    <div class="pricing-grid">
+      <div class="price">
+        <div class="price-tier">Free</div>
+        <div class="price-name">ALLY Free</div>
+        <div class="price-amount"><span class="price-num">S$0</span></div>
+        <div class="price-desc">For students, low-income caregivers, anyone trying us out.</div>
+        <ul class="price-features">
+          <li>1 care recipient</li>
+          <li>Basic task list & mood log</li>
+          <li>10 AI messages/month</li>
+          <li>Care team (3 seats)</li>
+          <li>HCG eligibility check</li>
+        </ul>
+        <a class="price-cta" href="#try">Get started</a>
+      </div>
+
+      <div class="price featured">
+        <div class="price-tier">Most popular</div>
+        <div class="price-name">ALLY Plus</div>
+        <div class="price-amount"><span class="price-num">S$9.90</span><span class="price-unit">/month</span></div>
+        <div class="price-desc">Or S$99/year. The consumer flagship.</div>
+        <ul class="price-features">
+          <li>Unlimited AI chat</li>
+          <li>Full subsidy navigator</li>
+          <li>5 languages, fully</li>
+          <li>Burnout monitoring</li>
+          <li>Care team (6 seats)</li>
+        </ul>
+        <a class="price-cta" href="#try">Start free trial</a>
+      </div>
+
+      <div class="price">
+        <div class="price-tier">Family</div>
+        <div class="price-name">ALLY Family</div>
+        <div class="price-amount"><span class="price-num">S$14.90</span><span class="price-unit">/month</span></div>
+        <div class="price-desc">Or S$149/year. For multi-recipient & FDW households.</div>
+        <ul class="price-features">
+          <li>Up to 3 care recipients</li>
+          <li>FDW first-class seat</li>
+          <li>Calendar sync</li>
+          <li>5GB document storage</li>
+          <li>Care team (8 seats)</li>
+        </ul>
+        <a class="price-cta" href="#try">Start free trial</a>
+      </div>
+
+      <div class="price">
+        <div class="price-tier">One-time</div>
+        <div class="price-name">ALLY Recovery</div>
+        <div class="price-amount"><span class="price-num">S$29</span><span class="price-unit">/90 days</span></div>
+        <div class="price-desc">For temporary caregivers — post-op, oncology, fall recovery.</div>
+        <ul class="price-features">
+          <li>All Plus features for 90 days</li>
+          <li>Hospital QR onboarding</li>
+          <li>No auto-renew</li>
+          <li>Optional convert to Plus</li>
+        </ul>
+        <a class="price-cta" href="#try">Buy once</a>
+      </div>
+    </div>
+
+    <div class="b2b-grid">
+      <div class="b2b">
+        <div class="price-tier">For employers</div>
+        <div class="price-name">ALLY for Work</div>
+        <div class="price-amount"><span class="price-num">S$6</span><span class="price-unit">/employee/mo</span></div>
+        <div class="price-desc">Caregiver benefit for your workforce. Anonymous burnout dashboard for HR. 50-seat minimum.</div>
+        <ul class="price-features">
+          <li>All Plus features for employees</li>
+          <li>Aggregate analytics for HR</li>
+          <li>Custom resource bundles</li>
+          <li>Dedicated success manager</li>
+        </ul>
+        <a class="price-cta" href="#partners">Talk to us</a>
+      </div>
+
+      <div class="b2b">
+        <div class="price-tier">For hospitals</div>
+        <div class="price-name">ALLY at Discharge</div>
+        <div class="price-amount"><span class="price-num">S$15–30</span><span class="price-unit">/discharge</span></div>
+        <div class="price-desc">QR-code onboarding from the discharge summary. 90-day Plus prepaid for the family.</div>
+        <ul class="price-features">
+          <li>QR onboarding flow</li>
+          <li>Pre-loaded care plan</li>
+          <li>Readmission analytics</li>
+          <li>Compliance reporting</li>
+        </ul>
+        <a class="price-cta" href="#partners">Pilot with us</a>
+      </div>
+
+      <div class="b2b" style="background:linear-gradient(135deg,#7C3AED,#5B21B6)">
+        <div class="price-tier" style="color:#E9D5FF">For HCG-eligible</div>
+        <div class="price-name">ALLY Subsidised</div>
+        <div class="price-amount"><span class="price-num">Free</span><span class="price-unit">means-tested</span></div>
+        <div class="price-desc" style="color:#E9D5FF;border-bottom-color:rgba(255,255,255,0.2)">Equity-first tier for low-income caregivers. ALLY Plus included, sponsored by ALLY and partners.</div>
+        <ul class="price-features">
+          <li>All Plus features</li>
+          <li>HCG application help</li>
+          <li>Dignified, no friction</li>
+        </ul>
+        <a class="price-cta" href="#try">Check eligibility</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust & compliance -->
+<section class="section" id="trust">
+  <div class="wrap">
+    <div class="section-eyebrow">Trust & safety</div>
+    <h2 class="section-title">Built for the highest-stakes data on your phone.</h2>
+    <p class="section-lead">Your loved one's health information sits in the most regulated category of personal data in Singapore. ALLY is engineered for that responsibility from the first line of code.</p>
+
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <div>
+          <h4>Singapore data residency</h4>
+          <p>All personal data stored in the AWS / Supabase Singapore region. No cross-border transfers without explicit consent and risk assessment.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">📜</div>
+        <div>
+          <h4>PDPA compliant</h4>
+          <p>Published Data Protection Notice, designated Data Protection Officer, breach notification process. Aligned to MOH/PDPC Healthcare Sector Advisory Guidelines (2023 revision).</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">⚕️</div>
+        <div>
+          <h4>Care coordination, not a medical device</h4>
+          <p>ALLY positions outside HSA's SaMD perimeter under the 2025 CDSS exemption — surfacing guideline-grounded information, never diagnostic or prescriptive output.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🛡️</div>
+        <div>
+          <h4>Human-in-the-loop AI</h4>
+          <p>Every parsed care plan is confirmed by a human before activation. Emergency keywords route to 995. AI output carries a clear disclaimer in every response.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔐</div>
+        <div>
+          <h4>Encrypted end-to-end</h4>
+          <p>TLS 1.3 in transit, AES-256 at rest. Role-based access. Quarterly access audits. Cyber Essentials certification target before any public-sector partnership.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">👤</div>
+        <div>
+          <h4>Your data, your control</h4>
+          <p>Export everything. Delete everything. Revoke any team member's access. We never sell data. We never train AI models on your loved one's health information.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Partners -->
+<section class="section" id="partners">
+  <div class="wrap">
+    <div class="partner-bg">
+      <div class="section-eyebrow" style="color:var(--pale)">For partners</div>
+      <h2 class="section-title">Hospitals, employers, government — ALLY is built to plug in.</h2>
+      <p class="section-lead">If you're responsible for caregivers — your patients, your employees, or your residents — ALLY is the layer that makes everything else you do work harder.</p>
+      <div class="partner-grid">
+        <div class="partner-card">
+          <h4>Hospitals & polyclinics</h4>
+          <p>Reduce 30-day readmission. QR-code onboarding from the discharge summary. ALLY Plus prepaid for the family. Readmission analytics dashboard for the ward.</p>
+          <span class="pill">Pilot from S$15/discharge</span>
+        </div>
+        <div class="partner-card">
+          <h4>Employers & EAP partners</h4>
+          <p>The caregiver benefit your workforce will actually use. Anonymous aggregate burnout dashboard for HR. Lower turnover, higher engagement, real impact on caregiving employees.</p>
+          <span class="pill">From S$6/employee/month</span>
+        </div>
+        <div class="partner-card">
+          <h4>Government & NGOs</h4>
+          <p>AIC, MOH, dementia and disease-specific NGOs. Shared infrastructure for caregiver outreach, training distribution, and subsidy navigation. Grant-funded equity tier available.</p>
+          <span class="pill">Partnership-favourable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="background:white;border-top:1px solid var(--border)">
+  <div class="wrap">
+    <div class="section-eyebrow">Questions</div>
+    <h2 class="section-title">Frequently asked.</h2>
+    <p class="section-lead">If your question isn't here, write to us at <a href="mailto:hello@ally.sg">hello@ally.sg</a> — we read every message.</p>
+
+    <div class="faq">
+      <details>
+        <summary>Is ALLY a medical device? Is it regulated?</summary>
+        <p>No. ALLY is a care-coordination tool that surfaces information based on established clinical guidelines and government schemes. It does not diagnose, prescribe, or deliver medical advice. Under HSA's 2025 SaMD/CDSS guidelines, this positioning sits explicitly outside the medical-device perimeter. Every AI output carries a clear disclaimer; emergency keywords route to 995.</p>
+      </details>
+      <details>
+        <summary>Is my loved one's health information safe?</summary>
+        <p>Yes. All data is stored in the Singapore region, encrypted at rest and in transit, and access-controlled to only the people you invite. ALLY is PDPA-compliant, has a designated Data Protection Officer, and follows MOH's Healthcare Sector Advisory Guidelines. We never sell your data and never train AI models on it.</p>
+      </details>
+      <details>
+        <summary>How accurate is the discharge parser?</summary>
+        <p>The parser is good and getting better, and we publish accuracy figures on our transparency page. Critically, every parsed care plan goes through a human-in-the-loop confirmation step before activation. You see the original document and the parsed output side by side. Nothing happens automatically that you didn't approve.</p>
+      </details>
+      <details>
+        <summary>What if my helper doesn't speak English?</summary>
+        <p>The FDW first-class mode supports Tagalog, Bahasa Indonesia, and Mandarin alongside English, with audio output and large-text layouts. Medication explanations, wound-care videos, and task notes are translated content — not just translated buttons. Available on the Family tier and above.</p>
+      </details>
+      <details>
+        <summary>Can I cancel anytime?</summary>
+        <p>Yes. No phone calls, no friction. Cancel from the app and you keep access until the end of your billing period. We send a clear renewal reminder seven days before each charge.</p>
+      </details>
+      <details>
+        <summary>Why is there a free tier?</summary>
+        <p>Because some caregivers genuinely cannot afford to pay, and they are the ones who need the most help. The free tier covers the basics. The paid tiers fund the free tier. We hold this line on principle.</p>
+      </details>
+      <details>
+        <summary>Will ALLY integrate with HealthHub or Singpass?</summary>
+        <p>Singpass and MyInfo integration is on our Year 2 roadmap pending regulatory partnership. HealthHub integration is being explored through Synapxe's HealthX Innovation Sandbox. We'll announce these when they're ready, not before.</p>
+      </details>
+      <details>
+        <summary>Can my hospital or employer partner with ALLY?</summary>
+        <p>Yes — that's a core part of how ALLY scales. Email <a href="mailto:partners@ally.sg">partners@ally.sg</a> and we'll set up a conversation. We're actively looking for one orthopaedic ward, three employer pilots, and an AIC research partnership in the next twelve months.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="section" id="try" style="text-align:center;padding:80px 0;background:var(--paler)">
+  <div class="wrap">
+    <h2 class="section-title" style="margin:0 auto 16px">Start with the moment you needed help most.</h2>
+    <p class="section-lead" style="margin:0 auto 32px">Drop in a discharge summary. ALLY will turn it into a plan in under 30 seconds. Free, in five languages, in your pocket.</p>
+    <a class="btn btn-primary" href="https://ally.sg/onboard" style="font-size:16px;padding:16px 32px">Try ALLY free</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-mission">
+        <div class="logo"><div class="moon" style="background:linear-gradient(135deg,white,var(--pale))"></div>ALLY</div>
+        <p>A caregiver co-pilot built in Singapore, for Singapore. Because the people holding their families together deserve a tool that holds them too.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#how">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#trust">Trust & safety</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Partners</h5>
+        <ul>
+          <li><a href="#partners">For hospitals</a></li>
+          <li><a href="#partners">For employers</a></li>
+          <li><a href="#partners">For government</a></li>
+          <li><a href="mailto:partners@ally.sg">partners@ally.sg</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Privacy notice</a></li>
+          <li><a href="#">Terms of service</a></li>
+          <li><a href="mailto:hello@ally.sg">hello@ally.sg</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ALLY · A caregiving co-pilot for Singapore</span>
+      <span>Made for the ones who care for everyone else 🌙</span>
+    </div>
+    <div class="disclaimer">
+      <strong>Important:</strong> ALLY provides general information only, not medical advice. For emergencies call <strong>995</strong>. ALLY is a care-coordination tool, not a medical device. Always consult your loved one's healthcare professionals for clinical decisions.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
