@@ -4,7 +4,7 @@
 //
 // Pre-app: pre-auth users see the marketing/landing redirect to /login.
 // Once authed: if no patient yet → onboarding flow (language → onboarding → discharge).
-// Once patient + plan exist → main app (5-tab bottom nav).
+// Once patient + plan exist → main app (6-tab bottom nav).
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -18,6 +18,7 @@ import OnboardingScreen from '@/components/screens/OnboardingScreen';
 import DischargeFlow from '@/components/screens/DischargeFlow';
 import HomeTab from '@/components/tabs/HomeTab';
 import TasksTab from '@/components/tabs/TasksTab';
+import WalletTab from '@/components/tabs/WalletTab';
 import AllyChatTab from '@/components/tabs/AllyChatTab';
 import ResourcesTab from '@/components/tabs/ResourcesTab';
 import ProfileTab from '@/components/tabs/ProfileTab';
@@ -116,6 +117,7 @@ export default function ALLY() {
             />
           )}
           {activeTab === 'tasks' && <TasksTab onTaskTap={setOpenTask} />}
+          {activeTab === 'wallet' && <WalletTab />}
           {activeTab === 'chat' && <AllyChatTab />}
           {activeTab === 'resources' && <ResourcesTab />}
           {activeTab === 'profile' && <ProfileTab />}

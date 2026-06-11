@@ -1,9 +1,9 @@
 // Static reference data used across ALLY: languages, demo discharge,
 // default tasks (used as seed when no real data yet), team mock,
-// subsidies database, and resource catalogue.
+// and resource catalogue.
 
 import { C } from './theme';
-import type { LegacyTask, ParsedDischarge } from './types';
+import type { LegacyTask } from './types';
 
 export const LANGS = [
   { code: 'en' as const, name: 'English',  native: 'English',         flag: '🇸🇬' },
@@ -42,29 +42,27 @@ FOLLOW-UP:
 2. Queenstown Polyclinic — 1 week
 3. SGH Physiotherapy — 3x/week for 6 weeks`;
 
-export const DEMO_PARSED: ParsedDischarge = {
-  diagnosis: 'Left Total Knee Replacement + T2DM + Hypertension',
-  diet: 'Diabetic, low-sodium <1500mg/day, soft food for 2 weeks',
-  warnings: [
-    'Wound: redness, discharge → A&E',
-    'Sudden calf pain → A&E',
-    'Glucose <4.0 or >15.0 → call doctor',
-    'BP >180 → call doctor',
-  ],
-  medications: [
-    { name: 'Metformin 500mg',   timing: 'Morning & Evening',  notes: 'With meals' },
-    { name: 'Amlodipine 5mg',    timing: 'Morning',            notes: 'Blood pressure' },
-    { name: 'Celecoxib 200mg',   timing: 'Morning & Evening',  notes: 'Pain — 7 days only' },
-    { name: 'Pantoprazole 40mg', timing: 'Before breakfast',   notes: 'Stomach protection' },
-  ],
-  tasks: [
-    { title: 'Metformin 500mg',          type: 'Medication',  time: '8:00 AM',  urgent: false },
-    { title: 'Physiotherapy exercises',  type: 'Physio',      time: '10:00 AM', urgent: false },
-    { title: 'BP check',                 type: 'Monitoring',  time: '12:00 PM', urgent: false },
-    { title: 'Change wound dressing',    type: 'Wound Care',  time: '3:00 PM',  urgent: true  },
-    { title: 'Amlodipine 5mg',           type: 'Medication',  time: '8:00 PM',  urgent: false },
-  ],
-};
+// DEMO_PARSED removed in v2: parse failures now surface honest errors instead
+// of silently substituting demo data (docs/product/REBUILD-BLUEPRINT.md §3, Seed 18).
+// The demo path still works — the sample text above goes through the real parser.
+
+// Demo receipt for the Family Care Wallet (goes through the REAL /api/parse-receipt).
+export const SAMPLE_RECEIPT = `GUARDIAN HEALTH & BEAUTY
+Blk 123 Toa Payoh Lor 1 #01-456, S310123
+GST Reg: M9-0012345-6
+Date: 11/06/2026 14:32  Receipt: 88412
+
+1x Omron BP Monitor HEM-7156    $89.00
+2x Hansaplast Sterile Gauze     $12.40
+1x Glucerna 850g Vanilla        $52.90
+1x Accu-Chek Test Strips x50    $38.50
+
+Subtotal                       $192.80
+GST 9% (incl)                   $15.92
+TOTAL                          $192.80
+VISA ****4021                  $192.80
+
+Thank you for shopping with us`;
 
 export const DEFAULT_TASKS: LegacyTask[] = [
   { id: 1, title: 'Metformin 500mg',           type: 'Medication',  time: '8:00 AM',  done: true,  who: 'SC', urgent: false, notes: 'Take with breakfast.',          steps: ['Wash hands', 'Retrieve tablet', 'Give with breakfast', 'Log completion'] },
@@ -81,27 +79,53 @@ export const TEAM_MOCK = [
   { id: 'AM', name: 'Auntie Mary', role: 'FDW',       color: C.ok,  tasks: 3,  done: 1, online: false },
 ];
 
-export const SUBSIDIES = [
-  { name: 'Home Caregiving Grant',     amt: 'S$600/month',         status: 'Eligible', desc: 'Monthly cash for caregivers of frail seniors. Enhanced from 1 April 2026.', col: C.ok   },
-  { name: 'CHAS Blue Card',            amt: 'Up to S$360/year',    status: 'Active',   desc: 'Subsidised outpatient care at GPs and dental clinics.',                       col: C.pri  },
-  { name: 'Pioneer Generation',        amt: 'Up to S$9,000/year',  status: 'Eligible', desc: 'MediShield Life subsidies, Medisave top-ups, outpatient subsidies.',          col: C.warn },
-  { name: 'Senior Mobility Fund',      amt: 'Up to S$2,800',       status: 'Check',    desc: 'Wheelchair, grab bars, shower chair, hospital bed.',                          col: C.pur  },
-  { name: 'MediFund Silver',           amt: 'Means-tested',        status: 'Check',    desc: 'Safety net for MediShield co-payments and hospitalisation costs.',            col: C.err  },
-  { name: 'Caregiving Training Grant', amt: 'S$200 one-time',      status: 'Eligible', desc: 'AIC-approved caregiver training reimbursement.',                              col: C.ok   },
+// SUBSIDIES removed in v2: the static list shipped stale figures (single-tier
+// HCG, defunct scheme names, wrong CTG amount). Subsidy data now lives in the
+// verified, versioned rules engine: src/lib/subsidies.ts (RULES_VERSION).
+
+// Resource Hub v2 — real destinations, not placeholder titles.
+// `verified: true` = the URL was checked against the primary source during the
+// June 2026 research pass (docs/strategy/STRATEGY.md). Re-verify quarterly.
+// `internal` entries route inside the app (e.g. the transparency page).
+export interface ResourceItem {
+  id: number;
+  title: string;
+  desc: string;
+  cat: string;
+  type: 'guide' | 'tool' | 'community' | 'page';
+  langs: string[];
+  verified: boolean;
+  url?: string;       // external, opens in new tab
+  internal?: string;  // in-app route
+}
+
+export const RESOURCES: ResourceItem[] = [
+  // ── Schemes & money ────────────────────────────────────────────────────
+  { id: 1, title: 'Home Caregiving Grant (AIC)', desc: 'S$200–600/month by income tier for families caring for a loved one needing help with daily activities. Official eligibility + application.', cat: 'Schemes', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.aic.sg/Financial-Assistance/Home-Caregiving-Grant' },
+  { id: 2, title: 'SupportGoWhere — Care Services Recommender', desc: 'Government tool that recommends schemes and services for your situation. Good second opinion to ALLY’s navigator.', cat: 'Schemes', type: 'tool', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://supportgowhere.life.gov.sg/caregiving/support-recommender' },
+  { id: 3, title: 'CareShield Life — claims & payouts (CPF)', desc: 'Lifelong monthly payouts when a loved one can no longer manage 3 of 6 daily activities. How to assess and claim.', cat: 'Schemes', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.cpf.gov.sg/member/healthcare-financing/careshield-life' },
+  { id: 4, title: 'CHAS subsidies', desc: 'Subsidised GP and dental visits — tier amounts and how to apply for the card.', cat: 'Schemes', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.chas.sg/chas-subsidies' },
+  { id: 5, title: 'MDW levy concession (MOM)', desc: 'Pay S$60/month instead of S$300 when caring for a senior 67+ or someone needing daily-activity help.', cat: 'Schemes', type: 'guide', langs: ['en'], verified: true, url: 'https://www.mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession' },
+
+  // ── Training ───────────────────────────────────────────────────────────
+  { id: 6, title: 'Caregivers Training Grant courses (AIC)', desc: 'S$400 balance (+S$200/yr) for approved caregiving courses — family members AND helpers can attend.', cat: 'Training', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.aic.sg/Financial-Assistance/Caregivers-Training-Grant' },
+  { id: 7, title: 'AIC Caregiving hub', desc: 'The national starting point: respite options, support groups, caregiver support action plan.', cat: 'Training', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.aic.sg/caregiving/' },
+
+  // ── Helper (MDW) support ───────────────────────────────────────────────
+  { id: 8, title: 'Centre for Domestic Employees (CDE)', desc: 'Free advice and support for domestic helpers — employment issues, wellbeing, helplines. Share with your helper.', cat: 'MDW Support', type: 'community', langs: ['en', 'ph'], verified: false, url: 'https://www.cde.org.sg' },
+  { id: 9, title: 'FAST — Foreign Domestic Worker Association', desc: 'Skills training, social support and a helpline for migrant domestic workers.', cat: 'MDW Support', type: 'community', langs: ['en', 'ph'], verified: false, url: 'https://www.fast.org.sg' },
+
+  // ── Mental health ──────────────────────────────────────────────────────
+  { id: 10, title: 'mindline.sg', desc: 'Free, anonymous mental-health self-help and chat support, built by MOH Office for Healthcare Transformation. For the 1-in-4 caregivers running on empty.', cat: 'Mental Health', type: 'tool', langs: ['en'], verified: false, url: 'https://www.mindline.sg' },
+
+  // ── Health library ─────────────────────────────────────────────────────
+  { id: 11, title: 'HealthHub — national health library', desc: 'MOH’s verified articles on wound care, medications, diabetes, blood pressure and more. Your discharge summaries from public hospitals also live here.', cat: 'Health Library', type: 'guide', langs: ['en', 'zh', 'ms', 'ta'], verified: true, url: 'https://www.healthhub.sg' },
+
+  // ── Transparency (in-app) ──────────────────────────────────────────────
+  { id: 12, title: 'How ALLY handles medical data', desc: 'Plain-language walkthrough of exactly what happens to a discharge document from photo to care plan — and what never happens.', cat: 'Transparency', type: 'page', langs: ['en'], verified: true, internal: '/transparency' },
 ];
 
-export const RESOURCES = [
-  { id: 1, title: 'How to Change a Wound Dressing',     cat: 'Wound Care',    type: 'video',   langs: ['en', 'zh', 'ms', 'ph'],         verified: true  },
-  { id: 2, title: 'Managing Multiple Medications',      cat: 'Medication',    type: 'video',   langs: ['en', 'zh', 'ms', 'ta', 'ph'],   verified: true  },
-  { id: 3, title: 'Post-Surgery Leg Exercises',         cat: 'Exercises',     type: 'video',   langs: ['en', 'zh'],                     verified: true  },
-  { id: 4, title: 'Low-Sodium Hawker Food Guide',       cat: 'Nutrition',     type: 'article', langs: ['en', 'zh', 'ms'],               verified: true  },
-  { id: 5, title: 'Coping with Caregiver Burnout',      cat: 'Mental Health', type: 'article', langs: ['en', 'zh', 'ms', 'ta', 'ph'],   verified: false },
-  { id: 6, title: 'Home Caregiving Grant Guide',        cat: 'Schemes',       type: 'guide',   langs: ['en', 'zh', 'ms', 'ta'],         verified: true  },
-  { id: 7, title: 'Checking Blood Pressure at Home',    cat: 'Monitoring',    type: 'video',   langs: ['en', 'zh', 'ms', 'ta', 'ph'],   verified: true  },
-  { id: 8, title: 'Managing Diabetes at Home',          cat: 'Medication',    type: 'guide',   langs: ['en', 'zh'],                     verified: true  },
-];
-
-export const RESOURCE_CATS = ['All', 'Wound Care', 'Medication', 'Exercises', 'Nutrition', 'Mental Health', 'Schemes', 'Monitoring'] as const;
+export const RESOURCE_CATS = ['All', 'Schemes', 'Training', 'MDW Support', 'Mental Health', 'Health Library', 'Transparency'] as const;
 
 export const CAREGIVER_ROLES = ['daughter', 'son', 'spouse', 'sibling', 'grandchild', 'FDW', 'other'] as const;
 

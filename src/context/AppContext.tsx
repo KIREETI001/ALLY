@@ -74,18 +74,26 @@ export function AppProvider({ children, initialUser }: { children: ReactNode; in
     return () => { cancelled = true; };
   }, [supabase, loadProfileAndContext]);
 
-  // Subscribe to auth changes to keep state in sync (signout, signin)
+  // Subscribe to auth changes to keep state in sync (signout, signin).
+  //
+  // CRITICAL: never await supabase queries directly inside onAuthStateChange.
+  // supabase-js holds an internal auth lock while this callback runs; any
+  // query awaited here waits on that same lock → the client deadlocks and
+  // EVERY subsequent request in the app hangs forever (stuck "…" buttons).
+  // Deferring to the next tick escapes the lock. See supabase/auth-js docs.
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email || '' });
-        await loadProfileAndContext(session.user.id);
-      } else {
-        setUser(null);
-        setProfile(null);
-        setCurrentPatient(null);
-        setCurrentCarePlan(null);
-      }
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setTimeout(() => {
+        if (session?.user) {
+          setUser({ id: session.user.id, email: session.user.email || '' });
+          void loadProfileAndContext(session.user.id);
+        } else {
+          setUser(null);
+          setProfile(null);
+          setCurrentPatient(null);
+          setCurrentCarePlan(null);
+        }
+      }, 0);
     });
     return () => { sub.subscription.unsubscribe(); };
   }, [supabase, loadProfileAndContext]);

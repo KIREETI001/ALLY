@@ -2,16 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ALLY ships its own light theme (lib/theme.ts). The OS-level dark-mode
+   media query that create-next-app generates flipped --foreground to
+   near-white, which made any element WITHOUT an explicit color render
+   white-on-white (e.g. the chat quick prompts). Theme colors are pinned;
+   OS appearance must not invert the app. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f0f6f8; /* C.bg */
+  --foreground: #1a2b35; /* C.text */
 }
 
 body {

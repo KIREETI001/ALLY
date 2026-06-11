@@ -278,6 +278,21 @@ end;
 $$;
 
 -- ----- Realtime publication (Supabase enables this on a default publication called supabase_realtime)
-alter publication supabase_realtime add table public.tasks;
-alter publication supabase_realtime add table public.care_team;
-alter publication supabase_realtime add table public.mood_logs;
+-- ALTER PUBLICATION ... ADD TABLE has no IF NOT EXISTS form in Postgres, so a
+-- bare ADD throws 42710 on re-run. Guard against pg_publication_tables to keep
+-- this script truly idempotent.
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['tasks', 'care_team', 'mood_logs'] loop
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime'
+        and schemaname = 'public'
+        and tablename = t
+    ) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;

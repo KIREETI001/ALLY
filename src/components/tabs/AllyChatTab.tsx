@@ -4,12 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import { Heart, Send } from 'lucide-react';
 import { C } from '@/lib/theme';
 import { QUICK_CHAT_PROMPTS } from '@/lib/demo-data';
-import { useApp } from '@/context/AppContext';
 import { useT } from '@/lib/i18n';
 import type { ChatMessage } from '@/lib/types';
 
 export default function AllyChatTab() {
-  const { currentPatient } = useApp();
   const t = useT();
   const [msgs, setMsgs] = useState<ChatMessage[]>([
     { role: 'assistant', content: t('chat.intro') },
@@ -22,6 +20,8 @@ export default function AllyChatTab() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [msgs]);
 
+  // v2: streaming responses. The server now derives care context (patient,
+  // plan, language) from the session — the client sends only the messages.
   const send = async (override?: string) => {
     const msg = (override || input).trim();
     if (!msg || busy) return;
@@ -33,16 +33,44 @@ export default function AllyChatTab() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...msgs, { role: 'user', content: msg }].map((m) => ({ role: m.role, content: m.content })),
-          patient: {
-            name: currentPatient?.name,
-            age: currentPatient?.age,
-            conditions: currentPatient?.conditions ?? [],
-          },
+          messages: [...msgs.filter((m, i) => !(i === 0 && m.role === 'assistant')), { role: 'user', content: msg }]
+            .map((m) => ({ role: m.role, content: m.content })),
         }),
       });
-      const d = await r.json();
-      setMsgs((p) => [...p, { role: 'assistant', content: d.message || 'Sorry, please try again.' }]);
+
+      // Error paths return JSON; the happy path streams text/plain.
+      const contentType = r.headers.get('content-type') || '';
+      if (!r.ok || contentType.includes('application/json')) {
+        const d = await r.json().catch(() => ({}));
+        setMsgs((p) => [...p, { role: 'assistant', content: d.error || 'Sorry, please try again.' }]);
+        setBusy(false);
+        return;
+      }
+
+      // Append an empty assistant bubble and fill it as tokens arrive.
+      setMsgs((p) => [...p, { role: 'assistant', content: '' }]);
+      const reader = r.body?.getReader();
+      if (!reader) throw new Error('no stream');
+      const decoder = new TextDecoder();
+      let acc = '';
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+        const snapshot = acc;
+        setMsgs((p) => {
+          const next = [...p];
+          next[next.length - 1] = { role: 'assistant', content: snapshot };
+          return next;
+        });
+      }
+      if (!acc.trim()) {
+        setMsgs((p) => {
+          const next = [...p];
+          next[next.length - 1] = { role: 'assistant', content: 'Sorry, please try again.' };
+          return next;
+        });
+      }
     } catch {
       setMsgs((p) => [...p, { role: 'assistant', content: 'Connection issue. Try again.' }]);
     }
@@ -62,7 +90,7 @@ export default function AllyChatTab() {
               <div
                 key={i}
                 onClick={() => send(q.t)}
-                style={{ background: C.card, borderRadius: 12, padding: '12px 14px', marginBottom: 8, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 9 }}
+                style={{ background: C.card, borderRadius: 12, padding: '12px 14px', marginBottom: 8, fontSize: 14, color: C.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 9 }}
               >
                 <span style={{ fontSize: 17 }}>{q.e}</span>{q.t}
               </div>

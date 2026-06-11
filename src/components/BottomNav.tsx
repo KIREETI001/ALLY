@@ -1,15 +1,16 @@
 'use client';
 
-import { Home, CheckSquare, MessageCircle, BookOpen, User } from 'lucide-react';
+import { Home, CheckSquare, Wallet, MessageCircle, BookOpen, User } from 'lucide-react';
 import { C } from '@/lib/theme';
 
-export type TabId = 'home' | 'tasks' | 'chat' | 'resources' | 'profile';
+export type TabId = 'home' | 'tasks' | 'wallet' | 'chat' | 'resources' | 'profile';
 
 const TABS: { id: TabId; label: string; Icon: typeof Home }[] = [
   { id: 'home', label: 'Home', Icon: Home },
   { id: 'tasks', label: 'Tasks', Icon: CheckSquare },
+  { id: 'wallet', label: 'Wallet', Icon: Wallet },
   { id: 'chat', label: 'AI Ally', Icon: MessageCircle },
-  { id: 'resources', label: 'Resources', Icon: BookOpen },
+  { id: 'resources', label: 'Learn', Icon: BookOpen },
   { id: 'profile', label: 'Profile', Icon: User },
 ];
 

@@ -37,3 +37,6 @@ next-env.d.ts
 
 # Build artifacts from sandbox cleanup
 *.tmp
+
+.vercel
+.env*.local

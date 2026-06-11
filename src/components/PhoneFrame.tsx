@@ -22,7 +22,9 @@ export default function PhoneFrame({ children }: { children: ReactNode }) {
         className="ally-phone"
         style={{
           width: 390,
-          height: 844,
+          // Never exceed the viewport: zoomed browsers / short windows would
+          // otherwise push the frame off-screen with no way to scroll to it.
+          height: 'min(844px, calc(100vh - 32px))',
           background: C.bg,
           borderRadius: 44,
           overflow: 'hidden',
@@ -38,7 +40,9 @@ export default function PhoneFrame({ children }: { children: ReactNode }) {
           <span style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>9:41</span>
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {/* minHeight: 0 lets flex children shrink below content height so
+            their own overflowY: auto areas can actually scroll. */}
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {children}
         </div>
       </div>

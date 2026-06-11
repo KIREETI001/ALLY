@@ -38,31 +38,39 @@ export default function OnboardingScreen({ onComplete }: Props) {
     setBusy(true);
     setError(null);
 
-    // Save profile fields
-    await supabase.from('profiles').update({ full_name: name, role }).eq('id', user.id);
+    // try/catch/finally so a thrown or hung await can never strand the
+    // button in its busy state with no visible error (the "stuck …" bug).
+    try {
+      // Save profile fields (non-blocking if it fails — patient creation matters more)
+      const { error: profErr } = await supabase
+        .from('profiles').update({ full_name: name, role }).eq('id', user.id);
+      if (profErr) console.warn('profile update failed:', profErr.message);
 
-    // Create patient
-    const conditions = ptCond.split(',').map((c) => c.trim()).filter(Boolean);
-    const { data: patient, error: pErr } = await supabase
-      .from('patients')
-      .insert({
-        owner_id: user.id,
-        name: ptName || 'My loved one',
-        age: ptAge ? Number(ptAge) : null,
-        conditions,
-      })
-      .select('*')
-      .single();
+      // Create patient
+      const conditions = ptCond.split(',').map((c) => c.trim()).filter(Boolean);
+      const { data: patient, error: pErr } = await supabase
+        .from('patients')
+        .insert({
+          owner_id: user.id,
+          name: ptName || 'My loved one',
+          age: ptAge ? Number(ptAge) : null,
+          conditions,
+        })
+        .select('*')
+        .single();
 
-    if (pErr || !patient) {
-      setError(pErr?.message || 'Could not save patient details.');
+      if (pErr || !patient) {
+        setError(pErr?.message || 'Could not save patient details.');
+        return;
+      }
+
+      await refreshProfile();
+      onComplete(patient as Patient);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong — please try again.');
+    } finally {
       setBusy(false);
-      return;
     }
-
-    await refreshProfile();
-    onComplete(patient as Patient);
-    setBusy(false);
   };
 
   const back = () => step > 1 && setStep(step - 1);

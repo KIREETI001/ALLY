@@ -2,6 +2,31 @@
 
 > _Support the ones who support everyone else._
 
+---
+
+## ⚡ v2 rebuild (10 Jun 2026) — read this first
+
+This codebase was rebuilt against adversarially verified market, regulatory and financial research. The three documents that now drive every product decision:
+
+1. **`docs/strategy/STRATEGY.md`** — cited research: the real competitor is the free government stack (HealthHub AI, SupportGoWhere); ALLY's wedge is discharge-to-home operationalisation; its moat is including the 316,900 MDWs formally excluded from HealthHub caregiver access; GTM is layered (B2B2C at discharge → B2C freemium funnel → MDW ecosystem); expansion Malaysia → Hong Kong → Taiwan.
+2. **`docs/product/REBUILD-BLUEPRINT.md`** — product spec + architecture (domain-wisdom seeds).
+3. **`docs/strategy/COUNCIL-VERDICT.md`** — 5-advisor pressure test. Changed the model: per-episode **Transition Kit** pricing with chronic-care graduation (not subscription-first), MDW proof-of-work log promoted to first-class, parse-failure UX = the trust battleground.
+
+**What v2 changed in code** (typecheck + lint clean):
+
+- **Parser v2** (`api/parse-discharge`): photo/PDF upload via Claude vision, **transcribe-and-structure only** (HSA GL-07-R2 SaMD boundary), per-item `source_quote` provenance + low-confidence flags, tool-enforced output, auth + rate limiting, honest errors — the silent demo-data fallback is gone.
+- **Subsidy rules engine** (`lib/subsidies.ts` + `/subsidies` wizard): deterministic, versioned (`RULES_VERSION = 2026-06-10`), every figure verified on primary sources — replacing stale hardcoded data (single-tier HCG, defunct FDW Grant, wrong CTG amount). The LLM never computes amounts.
+- **Chat v2** (`api/chat`): streaming, server-derived care context (never trusts the client), language-aware (5 languages), grounded subsidy facts from the rules module, safety contract (educate + signpost; never dose/diagnose).
+- **Security/PDPA floor**: `supabase/migrations/0002_v2_security_and_carelog.sql` (apply AFTER `schema.sql`; additive — new tables + tightened policies), consent records, `GET /api/privacy/export`, `POST /api/privacy/delete` (raw-document erasure = data minimisation).
+- **MDW proof-of-work**: append-only `care_log` on every task completion — the helper's timestamped protection from blame (the moat's engagement driver).
+- **WhatsApp-shaped digest** (`/api/digest` + `lib/digest.ts`): share-ready today; WABA push later via the idempotent, jittered `notifications` table.
+
+**Honest gaps:** new UI strings are English-only (Tagalog/Bahasa UI is the moat — prioritise); WABA sending stubbed pending Meta business verification (weeks of lead time — start now); subsidy rules in code, not yet the `subsidy_rules` table; one patient surfaced in AppContext (schema supports many); quarterly subsidy re-verification is release-blocking.
+
+**The 90-day plan (council verdict):** 20 real discharge documents from 20 real families through the parser. Two numbers: % parsed correctly without edits, and week-4 task-completion retention. Grants (Startup SG Founder S$50k — company must be <6 months old, check your ACRA date), hospital pilots, and pricing all argue from those two numbers.
+
+---
+
 ALLY is an AI-powered caregiver coordination tool built for the 210,000+ Singaporeans holding their families together. It turns hospital discharge documents into care plans, family WhatsApp groups into coordinated teams, and the government scheme maze into a five-question wizard — in five languages, with first-class support for foreign domestic workers.
 
 This repo is the working prototype: Next.js 14 App Router + TypeScript + Tailwind, Supabase for auth and persistence, Anthropic Claude for the AI chat and discharge parser.
