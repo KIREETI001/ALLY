@@ -23,9 +23,18 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const initialUser = user ? { id: user.id, email: user.email || '' } : null;
+  // Fail open, like the middleware: a root-layout crash takes down EVERY page
+  // ("Application error: a server-side exception"). If the auth bootstrap
+  // fails (missing env vars, unreachable Supabase), render with no initial
+  // user — AppProvider re-checks auth client-side and redirects to /login.
+  let initialUser: { id: string; email: string } | null = null;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    initialUser = user ? { id: user.id, email: user.email || '' } : null;
+  } catch (err) {
+    console.error('layout auth bootstrap failed:', err);
+  }
 
   return (
     <html lang="en">
