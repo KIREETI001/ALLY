@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Heart, Eye, EyeOff } from 'lucide-react';
@@ -8,7 +8,19 @@ import { C } from '@/lib/theme';
 import { signIn, signInWithGoogle } from './actions';
 import PhoneFrame from '@/components/PhoneFrame';
 
+// Next 14 requires useSearchParams() to live under a <Suspense> boundary for
+// prerendering — without it `next build` fails on this page
+// (missing-suspense-with-csr-bailout). The inner form mounts immediately on
+// the client; the fallback is never visible in practice.
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState('');

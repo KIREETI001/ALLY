@@ -33,6 +33,11 @@ export default async function RootLayout({
     const { data: { user } } = await supabase.auth.getUser();
     initialUser = user ? { id: user.id, email: user.email || '' } : null;
   } catch (err) {
+    // Next marks routes dynamic by THROWING during prerender (cookies() →
+    // digest DYNAMIC_SERVER_USAGE). That control-flow exception must
+    // propagate or the build log fills with false "failures" and routes can
+    // be mis-classified as static. Only swallow genuine runtime errors.
+    if ((err as { digest?: string })?.digest === 'DYNAMIC_SERVER_USAGE') throw err;
     console.error('layout auth bootstrap failed:', err);
   }
 
